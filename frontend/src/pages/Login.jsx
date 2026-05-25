@@ -28,8 +28,8 @@ const Login = () => {
     setBanInfo(null);
     setLoading(true);
     try {
-    await login(form.email, form.password);
-    // login successful
+      await login(form.email, form.password);
+      // login successful
       navigate("/");
     } catch (err) {
       console.error("Login: Caught error:", err);

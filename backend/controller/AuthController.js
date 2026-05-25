@@ -7,6 +7,26 @@ import {
 } from "../utils/genToken.js";
 import { serializeUser } from "../utils/userSerializer.js";
 
+const isValidEmail = (email) => {
+  return typeof email === "string" &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const isValidPassword = (password) => {
+  return typeof password === "string" && password.trim().length >= 6;
+};
+
+const isStrongPassword = (password) => {
+  return typeof password === "string" &&
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/.test(password);
+};
+
+const getPasswordStrength = (password) => {
+  if (!isValidPassword(password)) return "invalid";
+  if (isStrongPassword(password)) return "strong";
+  return "weak";
+};
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -16,6 +36,17 @@ export const login = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Email and password are required" });
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: "Please provide a valid email address" });
+    }
+
+    if (!isValidPassword(password)) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    const passwordStrength = getPasswordStrength(password);
+    console.log("Password strength:", passwordStrength);
 
     const user = await User.findOne({ email });
     console.log("User found in DB:", !!user);
@@ -67,6 +98,14 @@ export const register = async (req, res) => {
         .status(400)
         .json({ message: "Please fill all required fields" });
     }
+
+    if (!isStrongPassword(password)) {
+      return res.status(400).json({
+        message:
+          "Weak password. Use at least 8 characters, including uppercase, lowercase, numbers, and special characters.",
+      });
+    }
+
     const emailExists = await User.findOne({ email });
     if (emailExists) {
       return res.status(400).json({ message: "Email already registered" });
@@ -108,6 +147,13 @@ export const registerFaculty = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Please fill all required fields" });
+    }
+
+    if (!isStrongPassword(password)) {
+      return res.status(400).json({
+        message:
+          "Weak password. Use at least 8 characters, including uppercase, lowercase, numbers, and special characters.",
+      });
     }
 
     if (facultyCode !== process.env.FACULTY_INVITE_CODE) {

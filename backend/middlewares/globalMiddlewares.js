@@ -19,7 +19,7 @@ export const applyGlobalMiddlewares = (app) => {
       const normalizedOrigin = origin.replace(/\/$/, "");
 
       const isAllowed = allowedOrigins.some(
-        (allowed) => allowed.replace(/\/$/, "") === normalizedOrigin
+        (allowed) => allowed.replace(/\/$/, "") === normalizedOrigin,
       );
 
       if (isAllowed) return callback(null, true);
