@@ -35,7 +35,13 @@ async function request(method, url, body = null) {
   };
 
   const response = await fetch(`${BASE_URL}${url}`, options);
-  const data = await response.json();
+  let data = null;
+
+  try {
+    data = await response.json();
+  } catch (error) {
+    data = null;
+  }
 
   if (response.status === 401 && url !== "/auth/me" && url !== "/auth/login") {
     window.location.href = "/login";
@@ -43,7 +49,11 @@ async function request(method, url, body = null) {
   }
 
   if (!response.ok) {
-    throw { response: { data, status: response.status } };
+    const error = new Error(
+      data?.message || response.statusText || "Request failed"
+    );
+    error.response = { data, status: response.status };
+    throw error;
   }
 
   return { data };
@@ -121,4 +131,4 @@ export const uploadNote = async (formData) => {
     throw { response: { data, status: response.status } };
   }
   return { data };
-};
+};

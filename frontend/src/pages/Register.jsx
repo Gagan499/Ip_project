@@ -52,7 +52,7 @@ const Register = () => {
       setRegistered(true); // triggers useEffect to navigate to dashboard
     } catch (err) {
       setError(
-        err.response?.data?.message || "Registration failed. Try again.",
+        err?.response?.data?.message || err?.message || "Registration failed. Try again.",
       );
     } finally {
       setLoading(false);

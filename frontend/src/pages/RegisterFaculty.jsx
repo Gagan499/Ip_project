@@ -79,7 +79,7 @@ const RegisterFaculty = () => {
     } catch (err) {
       console.error("Registration error:", err);
       const message =
-        err?.response?.data?.message ||
+        err?.response?.data?.message || err?.message ||
         "Registration failed. Please try again.";
       setError(message);
     } finally {

@@ -37,7 +37,7 @@ const Login = () => {
         setBanInfo(err.response.data);
       } else {
         const message =
-          err?.response?.data?.message || "Invalid email or password";
+          err?.response?.data?.message || err?.message || "Invalid email or password";
         setError(message);
       }
     } finally {
